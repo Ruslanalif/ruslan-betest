@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BE Test | Login</title>
+    <%- include('../../general/library') %>
+    <link rel="stylesheet" href="<%- process.env.WEBVIEW_BASE_URL %>/static/publict/css/style.css">
+  
+</head>
+<body class="cstlogin">
+    <div class="container">
+        <div class="card">
+          <h2>Login</h2>
+          <form>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <div type="submit" class="button" onclick="submitdata()">Login</div>
+          </form>
+        </div>
+    </div>
+</body>
+<script>
+
+$(document).ready(function(){
+        hideLoader();
+    });
+    function submitdata() {
+        xusername = $('#username').val();
+        xpassword = $('#password').val();
+
+        var cxmsg = "";
+        if (xusername == "") {
+            cxmsg += 'Mohon Lengkapi <b>"username"</b>, <br/>';
+        }
+        if (xpassword == "") {
+            cxmsg += 'Mohon Lengkapi <b>"password"</b>, <br/>';
+        }
+        if (cxmsg == "") {
+            // Swal.fire({
+            //     icon: 'warning',
+            //     title: 'Lanjutkan Submit Data?',
+            //     showDenyButton: true,
+            //     confirmButtonText: 'Ya',
+            //     denyButtonText: `Batal`,
+            // }).then((result) => {
+            //     if (result.isConfirmed) {
+                    var form = new FormData();
+                    form.append("prmusername", xusername);
+                    form.append("prmpassword", xpassword);
+
+                    var settings = {
+                        "url": BASE_URL + "/login/submit",
+                        "method": "POST",
+                        "timeout": 0,
+                        "processData": false,
+                        "mimeType": "multipart/form-data",
+                        "contentType": false,
+                        "data": form
+                    };
+                    try {
+                        $.ajax(settings).done(async function (response) {
+                            var obj = JSON.parse(response);
+                            if (obj.code == 200) {
+                                Toast.fire({
+                                    icon: "success",
+                                    title: "Success!",
+                                    html: obj.message || ''
+                                }).then((result) => {
+                                    document.location = BASE_URL+"/userinfo"
+                                });
+                            } else {
+                                Toast.fire({
+                                    title: '<strong><u>UnAuthorized!</u></strong>',
+                                    icon: 'error',
+                                    html: obj.message || ''
+                                }).then((result) => {
+
+                                });
+                            }
+                            console.log('res ' + response);
+                        });
+                    } catch (err) {
+                        console.log(err);
+                    }
+
+            //     }
+            // });
+
+        } else {
+            Swal.fire({
+                title: '<strong><u>Required!</u></strong>',
+                icon: 'warning',
+                html: cxmsg
+            });
+        }
+    }
+</script>
+</html>
