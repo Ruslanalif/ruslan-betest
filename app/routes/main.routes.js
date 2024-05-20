@@ -3,6 +3,7 @@ import path from 'path';
 import _dirname from '../helper/__dirname.function.js';
 
 import loginRouter from '../module/login/routes.js';
+import accountloginRouter from '../module/accountlogin/routes.js';
 import userinfoRouter from '../module/userinfo/routes.js';
 import initResponseMiddleware from '../helper/response,middleware.js';
 import bodyParser from 'body-parser';
@@ -43,6 +44,7 @@ export default function mainRoutes(app) {
     router.use('/frontuserinfo', index);
     // router.use('/userinfo', verifyToken, userinfoRouter);
     router.use('/userinfo', userinfoRouter);
+    router.use('/accountlogin', accountloginRouter);
     // router.use('/token', refreshToken);
     router.get('/token', refreshToken);
     router.get('/logout', logout);

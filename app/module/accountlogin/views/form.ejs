@@ -10,6 +10,9 @@
         body{
             display: unset;
         }
+        .select2.select2-container{
+            width: 100% !important;
+        }
     </style>
 </head>
 <body>
@@ -17,7 +20,7 @@
     
     <div class="container-fluid">
         <div class="card">
-            <h3 class="pt-1" style="padding-left:1rem;">User Info</h3>
+            <h3 class="pt-1" style="padding-left:1rem;">Account Login</h3>
             <div class="container-fluid">
                 <div class="card">
                     <div class="btn btn-primary mt-2" style="width:min-content; margin-left: 1rem;" id="add_form" >+</div>
@@ -26,29 +29,27 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
-                                    <th>User ID</th>
-                                    <th>Name</th>
-                                    <th>Account Number</th>
-                                    <th>Email</th>
-                                    <th>Registration Number</th>
+                                    <th>Account ID</th>
+                                    <th>UserName</th>
+                                    <th>Last Login</th>
+                                    <th>User</th>
                                     <th style="width: 20%">Control</th>
                                 </tr>
                             </thead>
                             <tbody id="t_body">
                                 
-                                <% i=1; user_info.forEach((user)=>{
+                                <% i=1; account_login.forEach((account)=>{
                                     %>
                                     <tr>
                                                 <td><%- i++ %></td>
-                                                <td><%- user.userId %></td>
-                                                <td><%- user.fullName %></td>
-                                                <td><%- user.accountNumber %></td>
-                                                <td><%- user.emailAddress %></td>
-                                                <td><%- user.registrationNumber %></td>
+                                                <td><%- account.accountId %></td>
+                                                <td><%- account.userName %></td>
+                                                <td><%- account.lastLogin ? moment(account.lastLogin).format('DD MMM YYYY HH:mm') : '' %></td>
+                                                <td><%- account.userId %></td>
                                                 <td>
-                                                    <div class="btn btn-sm btn-default btn-detail" data-full="<%- user.userId+'||'+user.fullName+'||'+user.accountNumber+'||'+user.emailAddress+'||'+user.registrationNumber%>">Detail</div>
-                                                    <div class="btn btn-sm btn-success btn-edit" data-full="<%- user._id+'||'+user.userId+'||'+user.fullName+'||'+user.accountNumber+'||'+user.emailAddress+'||'+user.registrationNumber%>">Edit</div>
-                                                    <div class="btn btn-sm btn-danger" onclick="deleteData('<%- user._id %>')">Hapus</div>
+                                                    <div class="btn btn-sm btn-default btn-detail" data-full="<%- account.accountId+'||'+account.userName+'||'+account.lastLogin+'||'+account.userId %>">Detail</div>
+                                                    <div class="btn btn-sm btn-success btn-edit" data-full="<%- account._id+'||'+account.accountId+'||'+account.userName+'||'+account.lastLogin+'||'+account.userId %>">Edit</div>
+                                                    <div class="btn btn-sm btn-danger" onclick="deleteData('<%- account._id %>')">Hapus</div>
                                                 </td>
                                             </tr>
                                     <%
@@ -75,32 +76,30 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="UserId">User ID</label>
-                                    <input type="text" id="userId" class="form-control" placeholder="Fill User Id">
+                                    <label for="accountId">Acoount ID</label>
+                                    <input type="text" id="accountId" class="form-control" placeholder="Fill Account Id">
                                 </div>
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="fullName">Nama</label>
-                                    <input maxlength="55" id="fullName" type="text" class="form-control" placeholder="Fill Full Name">
+                                    <label for="userName">UserName</label>
+                                    <input maxlength="55" id="userName" type="text" class="form-control" placeholder="Fill UserName">
                                 </div>
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="accountNumber">Account Number</label>
-                                    <input maxlength="100" id="accountNumber" type="text" class="form-control" placeholder="Fill Account Number">
+                                    <label for="password">Password</label>
+                                    <input maxlength="100" id="password" type="password" class="form-control" placeholder="Fill Password">
                                 </div>
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="emailAddress">Email Address</label>
-                                    <input maxlength="255" id="emailAddress" type="text" class="form-control" placeholder="Fill Email Address">
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label for="registrationNumber">Registration Number</label>
-                                    <input maxlength="100" id="registrationNumber" type="text" class="form-control" placeholder="Fill Registration Number">
+                                    <label for="emailAddress">User</label>
+                                    <select class="form-control" id="userId">
+                                        <% user_info.forEach((user)=>{ %>
+                                    <option value="<%- user.userId %>"> <%- user.fullName%></option>
+                                    <% }); %>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +141,7 @@
 
     function init(){
         
-        // $('#KomoditasKode').select2();
+        $('#userId').select2();
         
     }
 
@@ -153,12 +152,11 @@
             // loadPkKey();
             g_edit = 'n';
 
-            $('#userId').removeAttr('readonly');
-            $('#fullName').removeAttr('readonly');
-            $('#accountNumber').removeAttr('readonly');
-            $('#emailAddress').removeAttr('readonly');
-            $('#registrationNumber').removeAttr('readonly');
-            $('#modalTitle').html('Add User Info');
+            $('#accountId').removeAttr('readonly');
+            $('#userName').removeAttr('readonly');
+            $('#password').removeAttr('readonly');
+            $('#userId').removeAttr('readonly').select2();
+            $('#modalTitle').html('Add Account Login');
             $('#modalform').modal('show');
             $('#simpan_btn').toggle(true);
         });
@@ -168,24 +166,22 @@
             // alert(datas[0]);
             g_edit = 'y';
             $('#id').val(datas[0]);
-            $('#userId').val(datas[1]).removeAttr('readonly');
-            $('#fullName').val(datas[2]).removeAttr('readonly');
-            $('#accountNumber').val(datas[3]).removeAttr('readonly');
-            $('#emailAddress').val(datas[4]).removeAttr('readonly');
-            $('#registrationNumber').val(datas[5]).removeAttr('readonly');
-            $('#modalTitle').html('Edit User Info');
+            $('#accountId').val(datas[1]).removeAttr('readonly');
+            $('#userName').val(datas[2]).removeAttr('readonly');
+            $('#password').removeAttr('readonly');
+            $('#userId').val(datas[4]).removeAttr('readonly').select2();
+            $('#modalTitle').html('Edit Account Login');
             $('#modalform').modal('show');
             $('#simpan_btn').toggle(true);
         });
         $('.btn-detail').click(function(){
             // loadPkKey();
             var datas = $(this).data('full').split('||'); 
-            $('#userId').val(datas[1]).attr('readonly', 'readonly');
-            $('#fullName').val(datas[2]).attr('readonly', 'readonly');
-            $('#accountNumber').val(datas[3]).attr('readonly', 'readonly');
-            $('#emailAddress').val(datas[4]).attr('readonly', 'readonly');
-            $('#registrationNumber').val(datas[5]).attr('readonly', 'readonly');
-            $('#modalTitle').html('Detail User Info');
+            $('#accountId').val(datas[2]).attr('readonly', 'readonly');
+            $('#userName').val(datas[2]).attr('readonly', 'readonly');
+            $('#password').val(datas[2]).attr('readonly', 'readonly');
+            $('#userId').val(datas[2]).attr('readonly', 'readonly').select2();
+            $('#modalTitle').html('Detail Account Login');
             $('#modalform').modal('show');
             $('#simpan_btn').toggle(false);
         });
@@ -228,14 +224,13 @@
                 var form = new FormData();
                     form.append("prmmode", is_editing ? "EDIT" : g_edit == 'd' ? "DEL" : "ADD");
                     form.append("prmid", $('#id').val());
+                    form.append("prmaccountId", $('#accountId').val());
+                    form.append("prmuserName", $('#userName').val());
+                    form.append("prmpassword", $('#password').val());
                     form.append("prmuserId", $('#userId').val());
-                    form.append("prmfullName", $('#fullName').val());
-                    form.append("prmaccountNumber", $('#accountNumber').val());
-                    form.append("prmemailAddress", $('#emailAddress').val());
-                    form.append("prmregistrationNumber", $('#registrationNumber').val());
 
                     var settings = {
-                        "url": BASE_URL + "/userinfo/submit",
+                        "url": BASE_URL + "/accountlogin/submit",
                         "method": "POST",
                         "timeout": 0,
                         "processData": false,

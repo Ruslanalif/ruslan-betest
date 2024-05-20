@@ -107,3 +107,35 @@ export async function logout(req, res) {
 }
 
 
+export async function generate_admin(req, res) {
+    try {
+        const {prmusername, prmpassword} = req.body || {};
+        // const { x_uid } = req.headers;
+        console.log(req.headers);
+        console.log(req.query);
+        // const q = req.db_conn.from("MsFacilityCondition");
+        req.db_conn.open();
+
+        const salt = 10;
+        const hashedPassword = await bcrypt.hash('123', salt);
+        const account_login = req.db_conn.db.collection("account_login");
+        var result = await account_login.insertOne({
+            accountId : '001',
+            userName : 'admin',
+            password : hashedPassword
+        });
+        let code, message;
+        if(result){
+            code = 200;
+            message = 'generate admin success, UserName : admin, pssword : 123';
+            
+        }
+        // console.log("prm" + prmusername);        
+
+        // return res.json({ "data": result, prmststus: 1 });
+        return res.success({ result, code, message});
+    } catch (error) {
+        console.log("ERROR STORE invoice TMP", error);
+        return res.badreq(error);
+    }
+}
